@@ -197,6 +197,7 @@
 
     addStore: function (f) { return sb.from('stores').insert(f).then(done); },
     updateStore: function (id, f) { return sb.from('stores').update(f).eq('id', id).then(done); },
+    updateMyStore: function (storeN, f) { var s = storeByName(storeN); if (!s) return Promise.resolve({ error: 'generic' }); return rpc('update_my_store', { p_store: s.id, p_description: f.description == null ? null : f.description, p_cover: f.cover || null }); },
     assignOwner: function (id, email) { return rpc('assign_owner', { p_store: id, p_email: email }); },
     setDriverStatus: function (id, st) { return sb.from('profiles').update({ driver_status: st }).eq('id', id).then(done); },
 
