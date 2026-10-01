@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Talabat — Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f4f6f8;color:#333;padding:28px 14px 30px}
+.w{max-width:900px;margin:0 auto}
+.top{background:#1a202c;color:#fff;border-radius:14px;padding:16px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+.k{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px;text-align:center}.k b{font-size:20px;color:#ff5a00;display:block}.k span{font-size:11px;color:#718096}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:14px;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+h3{font-size:15px;margin:14px 0 10px;color:#1a202c}
+.tabs{display:flex;gap:8px;margin-bottom:12px}.tabs button{flex:1;border:0;background:#e2e8f0;border-radius:8px;padding:10px 4px;font-weight:700;font-size:12px;color:#4a5568;cursor:pointer}.tabs .on{background:#ff5a00;color:#fff}
+.chips{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;scrollbar-width:none}
+.chip{flex-shrink:0;background:#e2e8f0;border:0;border-radius:16px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;color:#4a5568}.chip.on{background:#ff5a00;color:#fff}
+.b{border:0;border-radius:8px;padding:8px 11px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;background:#27ae60}.b.r{background:#e74c3c}.b.g{background:#718096}.b.o{background:#e67e22}
+.s{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:#edf2f7}
+.s.pending{background:#fef3c7;color:#b45309}.s.preparing,.s.ready{background:#dbeafe;color:#1d4ed8}.s.pickedup{background:#e9d5ff;color:#7e22ce}.s.delivered,.s.approved{background:#dcfce7;color:#15803d}.s.rejected,.s.cancelled,.s.suspended{background:#fee2e2;color:#b91c1c}
+input,select{width:100%;padding:10px;margin-bottom:8px;border:1px solid #cbd5e0;border-radius:8px;font-size:14px;background:#fff}
+small{color:#718096}
+.btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+</style></head><body><div class="w" id="app"></div>
+<script>window.onerror=function(m,s,l){var d=document.createElement('div');d.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#e74c3c;color:#fff;font:12px monospace;padding:8px;word-break:break-all';d.textContent='ERR: '+m+' @'+String(s||'').split('/').pop()+':'+l;(document.body||document.documentElement).appendChild(d)};window.addEventListener('unhandledrejection',function(e){window.onerror('Promise: '+(e.reason&&e.reason.message||e.reason),'',0)})</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="talabat-core.js?v=3"></script>
+<script>
+TLB.addDict({aT:'Панель администратора',aOrd:'Заказов',aRev:'Оборот (доставлено)',aComm:'Комиссия платформы',aAct:'В работе',aAll:'Все',aNo:'Заказов нет',aItems:'позиций',tO:'Заказы',tS:'Магазины',tD:'Курьеры',aAdd:'Добавить магазин',aName:'Название',aDesc:'Описание',aCom:'Комиссия, %',aFeeT:'Тип доставки',aFix:'Фиксированная',aDist:'По расстоянию',aFree:'Бесплатная',aFeeB:'Базовая цена доставки',aKm:'Цена за км (после 3 км)',aDis:'Скидка магазина, %',aSave:'Создать магазин',aFill:'Введите название',aOn:'Активен',aOff:'Отключён',aSus:'Отключить',aAc:'Включить',aEditC:'Комиссия %',aOwn:'Владелец (email)',aOwnB:'Назначить владельца',aNoOwn:'нет владельца',aHasOwn:'владелец назначен',aPend:'Ожидают одобрения (аптеки)',aApp:'Одобрить',aNoD:'Курьеров нет',aDrvA:'Одобрить',aDrvS:'Заблокировать',aNote:'Вход по email. Заявки курьеров одобряются здесь.',rest:'Рестораны',grocery:'Продукты',pharmacy:'Аптеки',beauty:'Красота',flowers:'Цветы',gifts:'Подарки',shops:'Магазины',sweets:'Сладости',aDel:'доставка'},
+{aT:'Admin dashboard',aOrd:'Orders',aRev:'Revenue (delivered)',aComm:'Platform commission',aAct:'In progress',aAll:'All',aNo:'No orders',aItems:'items',tO:'Orders',tS:'Stores',tD:'Couriers',aAdd:'Add store',aName:'Name',aDesc:'Description',aCom:'Commission, %',aFeeT:'Delivery type',aFix:'Fixed',aDist:'By distance',aFree:'Free',aFeeB:'Base delivery fee',aKm:'Price per km (after 3 km)',aDis:'Store discount, %',aSave:'Create store',aFill:'Enter a name',aOn:'Active',aOff:'Disabled',aSus:'Disable',aAc:'Enable',aEditC:'Commission %',aOwn:'Owner (email)',aOwnB:'Assign owner',aNoOwn:'no owner',aHasOwn:'owner assigned',aPend:'Waiting for approval (pharmacy)',aApp:'Approve',aNoD:'No couriers',aDrvA:'Approve',aDrvS:'Suspend',aNote:'Email login. Courier applications are approved here.',rest:'Restaurants',grocery:'Groceries',pharmacy:'Pharmacy',beauty:'Beauty',flowers:'Flowers',gifts:'Gifts',shops:'Shops',sweets:'Sweets',aDel:'delivery'});
+const t=TLB.t,esc=TLB.esc,$=id=>document.getElementById(id);
+const CATS=['rest','grocery','pharmacy','beauty','flowers','gifts','shops','sweets'],ST=['pending','preparing','ready','pickedup','delivered','rejected','cancelled'];
+let tab='o',f='all';
+const run=async p=>{const r=await p;if(r&&r.error)alert(t('err_'+r.error))};
+const fmt=ts=>new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+const v=id=>$(id).value.trim();
+function addStore(){if(!v('sn')){alert(t('aFill'));return}
+  run(TLB.addStore({name:v('sn').slice(0,80),category:v('sc'),description:v('ss'),commission_pct:+v('sm')||0,fee_type:v('sf'),fee_base:+v('sb')||0,fee_per_km:+v('sk')||0,discount_pct:+v('sd')||0}))}
+function editC(id,c){const x=prompt(t('aEditC'),c);if(x!==null&&!isNaN(+x))run(TLB.updateStore(id,{commission_pct:+x}))}
+function setOwner(id){const e=prompt(t('aOwn'));if(e)run(TLB.assignOwner(id,e.trim()))}
+function vOrders(){const all=TLB.orders(),sh=all.filter(o=>f=='all'||o.status==f);
+  return `<div class="chips">${['all',...ST].map(s=>`<button class="chip ${f==s?'on':''}" onclick="f='${s}';render()">${s=='all'?t('aAll'):t(s)}</button>`).join('')}</div>
+  ${sh.length?sh.map(o=>`<div class="card"><div class="row"><b>#${o.id} — ${esc(o.store)}</b><span class="s ${o.status}">${t(o.status)}</span></div>
+  <div class="row" style="margin-top:6px"><small>${fmt(o.createdAt)} • ${esc(o.client.name)} • ${o.items.reduce((s,i)=>s+i.qty,0)} ${t('aItems')}</small><b style="color:#ff5a00">${o.total} TJS</b></div>
+  <small>🛵 ${o.driver?esc(o.driverName):'—'} • ${t('aDel')} ${o.delivery} • ${esc(o.payment)}</small></div>`).join(''):`<div class="card">${t('aNo')}</div>`}`}
+function vStores(){const ss=TLB.stores(true),pend=TLB.pendingItems();
+  return `<div class="card"><b>${t('aAdd')}</b><div style="height:8px"></div>
+  <input id="sn" placeholder="${t('aName')}"><input id="ss" placeholder="${t('aDesc')}">
+  <select id="sc">${CATS.map(c=>`<option value="${c}">${t(c)}</option>`).join('')}</select>
+  <input id="sm" type="number" placeholder="${t('aCom')}" value="10">
+  <select id="sf"><option value="fixed">${t('aFix')}</option><option value="distance">${t('aDist')}</option><option value="free">${t('aFree')}</option></select>
+  <input id="sb" type="number" placeholder="${t('aFeeB')}" value="10"><input id="sk" type="number" placeholder="${t('aKm')}" value="0"><input id="sd" type="number" placeholder="${t('aDis')}" value="0">
+  <button class="b" style="width:100%;padding:12px" onclick="addStore()">${t('aSave')}</button></div>
+  ${ss.map(s=>`<div class="card"><div class="row"><b>${esc(s.name)}</b><span class="s ${s.is_active?'approved':'suspended'}">${s.is_active?t('aOn'):t('aOff')}</span></div>
+  <small>${t(s.category)} • ${t('aCom')}: ${s.commission_pct}% • ${s.fee_type=='free'?t('aFree'):s.fee_base+' TJS'} • ${s.owner_id?t('aHasOwn'):t('aNoOwn')}</small>
+  <div class="btns"><button class="b ${s.is_active?'r':''}" onclick="run(TLB.updateStore('${s.id}',{is_active:${!s.is_active}}))">${s.is_active?t('aSus'):t('aAc')}</button>
+  <button class="b o" onclick="editC('${s.id}',${s.commission_pct})">${t('aEditC')}</button><button class="b g" onclick="setOwner('${s.id}')">${t('aOwnB')}</button></div></div>`).join('')}
+  ${pend.length?`<h3>${t('aPend')}</h3>${pend.map(i=>`<div class="card row"><div><b>${esc(i.name)}</b><br><small>${esc(i.store)} • ${i.price} TJS</small></div><button class="b" onclick="run(TLB.approveItem('${i.id}'))">${t('aApp')}</button></div>`).join('')}`:''}`}
+function vDrivers(){const d=TLB.drivers();
+  return d.length?d.map(x=>`<div class="card"><div class="row"><b>🛵 ${esc(x.name||x.id.slice(0,8))}</b><span class="s ${x.driver_status||'pending'}">${x.driver_status||'pending'}</span></div>
+  <div class="btns"><button class="b" onclick="run(TLB.setDriverStatus('${x.id}','approved'))">${t('aDrvA')}</button><button class="b r" onclick="run(TLB.setDriverStatus('${x.id}','suspended'))">${t('aDrvS')}</button></div></div>`).join(''):`<div class="card">${t('aNoD')}</div>`}
+function render(){
+  const all=TLB.orders(),del=all.filter(o=>o.status=='delivered'),act=all.filter(o=>['pending','preparing','ready','pickedup'].includes(o.status));
+  $('app').innerHTML=`<div class="top"><b style="font-size:17px">👑 ${t('aT')}</b><br><small style="color:#a0aec0">${t('aNote')}</small></div>
+  <div class="grid"><div class="k"><b>${all.length}</b><span>${t('aOrd')}</span></div><div class="k"><b>${del.reduce((s,o)=>s+o.total,0)} TJS</b><span>${t('aRev')}</span></div>
+  <div class="k"><b>${del.reduce((s,o)=>s+o.commission,0).toFixed(1)} TJS</b><span>${t('aComm')}</span></div><div class="k"><b>${act.length}</b><span>${t('aAct')}</span></div></div>
+  <div class="tabs">${[['o','tO'],['s','tS'],['d','tD']].map(x=>`<button class="${tab==x[0]?'on':''}" onclick="tab='${x[0]}';render()">${t(x[1])}</button>`).join('')}</div>`+({o:vOrders,s:vStores,d:vDrivers}[tab])()}
+TLB.start('admin',()=>{TLB.on(()=>{const a=document.activeElement;if(a&&/^(INPUT|SELECT)$/.test(a.tagName)&&$('app').contains(a))return;render()});render()});
+</script></body></html>

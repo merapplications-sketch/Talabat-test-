@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Talabat — Merchant</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f4f6f8;color:#333;padding:28px 14px 30px}
+.w{max-width:800px;margin:0 auto}
+.top{background:#2d3748;color:#fff;border-radius:14px;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.top select{background:#4a5568;color:#fff;border:0;border-radius:6px;padding:5px;font-size:13px;font-weight:700;max-width:190px}
+.tabs{display:flex;gap:8px;margin-bottom:12px}.tabs button{flex:1;border:0;background:#e2e8f0;border-radius:8px;padding:10px 4px;font-weight:700;font-size:12px;color:#4a5568;cursor:pointer}.tabs .on{background:#ff5a00;color:#fff}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:14px;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.items{background:#f8fafc;border-radius:8px;padding:9px;margin:9px 0;font-size:13px}.items div{display:flex;justify-content:space-between;margin-bottom:3px}
+.note{font-size:11px;color:#e74c3c;font-style:italic}
+.b{border:0;border-radius:8px;padding:10px 14px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;background:#ff5a00}
+.b.g{background:#27ae60}.b.r{background:#e74c3c}.b.s{background:#2980b9;width:100%;margin-top:9px}.b.o{background:#e67e22}
+.tm{flex:1;border:0;background:#e2e8f0;border-radius:6px;padding:6px;font-weight:700;font-size:11px;cursor:pointer}.tm.on{background:#2d3748;color:#fff}
+input[type=text],input[type=number]{width:100%;padding:10px;margin-bottom:9px;border:1px solid #cbd5e0;border-radius:8px;font-size:14px}
+.thumb{width:50px;height:50px;border-radius:8px;object-fit:cover;background:#e2e8f0}
+.k{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px;text-align:center;flex:1}.k b{font-size:19px;color:#ff5a00;display:block}.k span{font-size:11px;color:#718096}
+.bar{width:36px;border-radius:6px 6px 0 0;margin:0 auto}
+</style></head><body><div class="w" id="app"></div>
+<script>window.onerror=function(m,s,l){var d=document.createElement('div');d.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#e74c3c;color:#fff;font:12px monospace;padding:8px;word-break:break-all';d.textContent='ERR: '+m+' @'+String(s||'').split('/').pop()+':'+l;(document.body||document.documentElement).appendChild(d)};window.addEventListener('unhandledrejection',function(e){window.onerror('Promise: '+(e.reason&&e.reason.message||e.reason),'',0)})</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="talabat-core.js?v=3"></script>
+<script>
+TLB.addDict({mOrders:'Заказы',mMenu:'Меню',mStats:'Аналитика',live:'Активные заказы',noAct:'Нет активных заказов',prep:'Время приготовления',acc:'Принять ✓',rej:'Отклонить ✕',rdy:'Готов к выдаче 📦',withC:'Передан курьеру — ждём доставку',waitC:'Ждём курьера',pay:'Оплата',open:'ОНЛАЙН',shut:'ЗАКРЫТО',addD:'Добавить блюдо',nm:'Название блюда',pr:'Цена, TJS',hit:'🌟 Хит продаж',photo:'📷 Фото из галереи',addB:'Добавить в меню',stop:'В стоп-лист',on:'Включить',del:'Удалить',avail:'Доступно',stopped:'В стоп-листе',fill:'Заполните название и цену',dD:'День',dW:'Неделя',dM:'Месяц',dY:'Год',done:'Выполнено',rejd:'Отклонено',rev:'Выручка',hist:'История',noH:'Пока пусто',sto:'Магазин'},
+{mOrders:'Orders',mMenu:'Menu',mStats:'Analytics',live:'Active orders',noAct:'No active orders',prep:'Prep time',acc:'Accept ✓',rej:'Reject ✕',rdy:'Ready for pickup 📦',withC:'Handed to courier — awaiting delivery',waitC:'Waiting for courier',pay:'Payment',open:'ONLINE',shut:'CLOSED',addD:'Add item',nm:'Item name',pr:'Price, TJS',hit:'🌟 Bestseller',photo:'📷 Photo from gallery',addB:'Add to menu',stop:'Stop-list',on:'Enable',del:'Delete',avail:'Available',stopped:'In stop-list',fill:'Enter name and price',dD:'Day',dW:'Week',dM:'Month',dY:'Year',done:'Completed',rejd:'Rejected',rev:'Revenue',hist:'History',noH:'Nothing yet',sto:'Store'});
+const t=TLB.t,esc=TLB.esc,$=id=>document.getElementById(id);
+let STORE='',tab='o',per='dD',img='',lastN=-1;
+const ACT=['pending','preparing','ready','pickedup'];
+const act=()=>TLB.orders(o=>o.store==STORE&&ACT.includes(o.status));
+const past=()=>TLB.orders(o=>o.store==STORE&&['delivered','rejected','cancelled'].includes(o.status));
+function beep(){try{const c=new(window.AudioContext||window.webkitAudioContext)();[0,.4].forEach(d=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=880;g.gain.setValueAtTime(.2,c.currentTime+d);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d+.3);o.connect(g);g.connect(c.destination);o.start(c.currentTime+d);o.stop(c.currentTime+d+.3)})}catch(e){}}
+document.addEventListener('click',()=>{},{once:true});
+const setTab=x=>{tab=x;render()};
+const setStore=v=>{STORE=v;localStorage.setItem('tlb_mstore',v);lastN=-1;render()};
+const st=async(id,s)=>{const r=await TLB.setStatus(id,s);if(r.error)alert(t('err_'+r.error))};
+const tog=id=>{const i=TLB.getMenu(STORE).find(x=>x.id==id);if(i)TLB.updateItem(id,{available:!i.available})};
+const del=id=>{if(confirm('OK?'))TLB.deleteItem(id)};
+function pick(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas'),s=200/Math.max(im.width,im.height,200);c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);img=c.toDataURL('image/jpeg',.7);$('pv').src=img;$('pv').style.display='block'};im.src=ev.target.result};r.readAsDataURL(f)}
+function addItem(){const n=$('nn').value.trim(),p=parseFloat($('np').value);if(!n||!(p>0)){alert(t('fill'));return}
+  const pop=$('nh').checked,im=img;TLB.addItem(STORE,{name:n.slice(0,60),price:p,image:im,popular:pop});img=''}
+function vOrders(){const l=act();
+  return `<h3 style="margin-bottom:10px">${t('live')}</h3>${l.length?l.map(o=>`<div class="card"><div class="row"><b>#${o.id}</b><b style="color:#ff5a00">${o.total} TJS</b></div>
+  <p style="font-size:12px;color:#718096">${t('pay')}: ${esc(o.payment)} • ${esc(o.client.name)}</p>
+  <div class="items">${o.items.map(i=>`<div><span>${i.qty}× ${esc(i.name)}</span><span>${i.qty*i.price}</span></div>${i.note?`<div class="note">💬 ${esc(i.note)}</div>`:''}`).join('')}</div>
+  <p style="font-weight:700;font-size:12px;color:#2980b9">${t(o.status)}${o.status!='pending'?' ('+o.prepTime+' min)':''}</p>
+  ${o.status=='pending'||o.status=='preparing'?`<p style="font-size:11px;color:#718096;margin:6px 0 4px">${t('prep')}</p><div class="row">${[15,30,45].map(m=>`<button class="tm ${o.prepTime==m?'on':''}" onclick="TLB.patch(${o.id},{prepTime:${m}})">${m} min</button>`).join('')}</div>`:''}
+  ${o.status=='pending'?`<div class="row" style="margin-top:10px"><button class="b g" style="flex:2" onclick="st(${o.id},'preparing')">${t('acc')}</button><button class="b r" style="flex:1" onclick="st(${o.id},'rejected')">${t('rej')}</button></div>`:''}
+  ${o.status=='preparing'?`<button class="b s" onclick="st(${o.id},'ready')">${t('rdy')}</button>`:''}
+  ${o.status=='ready'?`<p style="margin-top:8px;font-size:12px">${o.driver?'🛵 '+esc(o.driverName):t('waitC')}</p>`:''}
+  ${o.status=='pickedup'?`<p style="margin-top:8px;font-size:12px;color:#27ae60">${t('withC')}</p>`:''}</div>`).join(''):`<div class="card">${t('noAct')}</div>`}`}
+function vMenu(){const m=TLB.getMenu(STORE);
+  return `<div class="card"><b>${t('addD')}</b><div style="height:9px"></div><input type="text" id="nn" placeholder="${t('nm')}"><input type="number" id="np" placeholder="${t('pr')}">
+  <label style="display:block;margin-bottom:9px"><input type="checkbox" id="nh"> ${t('hit')}</label>
+  <label style="display:block;background:#edf2f7;border:1px dashed #cbd5e0;padding:10px;text-align:center;border-radius:8px;margin-bottom:9px;font-size:12px;font-weight:700">${t('photo')}<input type="file" accept="image/*" style="display:none" onchange="pick(event)"></label>
+  <img id="pv" class="thumb" style="display:none;margin-bottom:9px"><button class="b g" style="width:100%" onclick="addItem()">${t('addB')} ➕</button></div>
+  ${m.map(i=>`<div class="card row"><img class="thumb" src="${esc(i.image)}" alt=""><div style="flex:1"><b>${esc(i.name)}</b>${i.popular?' 🌟':''}<div style="color:#ff5a00;font-weight:700">${i.price} TJS</div><div style="font-size:11px;font-weight:700;color:${i.available?'#27ae60':'#e74c3c'}">${i.available?t('avail'):t('stopped')}</div></div>
+  <div style="display:flex;flex-direction:column;gap:5px"><button class="b ${i.available?'o':'g'}" onclick="tog('${i.id}')">${i.available?t('stop'):t('on')}</button><button class="b r" onclick="del('${i.id}')">${t('del')}</button></div></div>`).join('')}`}
+function vStats(){const D=864e5,sp={dD:D,dW:7*D,dM:30*D,dY:365*D}[per],p=past().filter(o=>Date.now()-o.doneAt<sp);
+  const ok=p.filter(o=>o.status=='delivered'),no=p.length-ok.length,rev=ok.reduce((s,o)=>s+o.subtotal-o.discount,0),mx=Math.max(ok.length,no,1);
+  return `<div class="row" style="margin-bottom:10px">${['dD','dW','dM','dY'].map(k=>`<button class="tm ${per==k?'on':''}" onclick="per='${k}';render()">${t(k)}</button>`).join('')}</div>
+  <div class="row" style="margin-bottom:12px"><div class="k"><b>${ok.length}</b><span>${t('done')}</span></div><div class="k"><b>${rev} TJS</b><span>${t('rev')}</span></div></div>
+  <div class="card row" style="align-items:flex-end;height:150px"><div style="flex:1;text-align:center"><div class="bar" style="background:#27ae60;height:${Math.max(6,ok.length/mx*90)}px"></div><small>${t('done')} (${ok.length})</small></div><div style="flex:1;text-align:center"><div class="bar" style="background:#e74c3c;height:${Math.max(6,no/mx*90)}px"></div><small>${t('rejd')} (${no})</small></div></div>
+  <h3 style="margin:6px 0 10px">${t('hist')}</h3>${past().length?past().map(o=>`<div class="card row"><span>#${o.id}</span><span style="color:${o.status=='delivered'?'#27ae60':'#e74c3c'};font-weight:700">${t(o.status)}</span><b>${o.total} TJS</b></div>`).join(''):`<div class="card">${t('noH')}</div>`}`}
+function render(){
+  const stores=TLB.myStores().map(s=>s.name);if(!stores.includes(STORE))STORE=stores[0]||'';const open=TLB.isOpen(STORE),n=act().filter(o=>o.status=='pending').length;
+  if(lastN>=0&&n>lastN)beep();lastN=n;
+  $('app').innerHTML=`<div class="top"><div><small>${t('sto')}</small><br><select onchange="setStore(this.value)">${stores.map(s=>`<option ${s==STORE?'selected':''} value="${esc(s)}">${esc(s)}</option>`).join('')}</select></div>
+  <button class="b ${open?'g':'r'}" onclick="TLB.setOpen(STORE,${!open})">${open?'🟢 '+t('open'):'🔴 '+t('shut')}</button></div>
+  <div class="tabs">${[['o','📥 '+t('mOrders')+(n?' ('+n+')':'')],['m','🍔 '+t('mMenu')],['s','📊 '+t('mStats')]].map(x=>`<button class="${tab==x[0]?'on':''}" onclick="setTab('${x[0]}')">${x[1]}</button>`).join('')}</div>`+({o:vOrders,m:vMenu,s:vStats}[tab])()}
+TLB.start('merchant',()=>{TLB.on(()=>{if(tab=='m'&&document.activeElement&&/^(nn|np)$/.test(document.activeElement.id))return;render()});render()});
+</script></body></html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Talabat — Driver</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f4f6f8;color:#333;padding-bottom:90px}
+.hd{background:#1a202c;color:#fff;padding:28px 15px 16px;border-radius:0 0 20px 20px;display:flex;justify-content:space-between;align-items:center}
+.av{width:44px;height:44px;border-radius:50%;background:#ff5a00;display:flex;align-items:center;justify-content:center;font-size:20px;margin-right:12px}
+.pill{background:#ffffff22;border-radius:20px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:#27ae60}.dot.off{background:#e74c3c}
+.pg{padding:14px}h3{font-size:15px;margin:6px 0 10px;color:#1a202c}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:15px;margin-bottom:12px}
+.card.act{border:2px solid #ff5a00}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.badge{background:#fff3ed;color:#ff5a00;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
+.route{background:#f8fafc;border-radius:10px;padding:10px;margin:10px 0;font-size:12px;line-height:1.7}
+.b{display:block;width:100%;border:0;border-radius:12px;padding:13px;font-size:14px;font-weight:700;color:#fff;background:#ff5a00;text-align:center;text-decoration:none;margin-top:9px;cursor:pointer}
+.b.g{background:#27ae60}.b.m{background:#3498db;padding:10px;font-size:13px}.b.d{background:#cbd5e1;color:#718096}
+.chip{display:inline-block;background:#edf2f7;border:1px solid #cbd5e0;border-radius:12px;padding:5px 9px;font-size:11px;font-weight:600;margin:0 4px 4px 0;cursor:pointer}
+.chat{max-height:110px;overflow:auto;display:flex;flex-direction:column;gap:5px;margin:6px 0;font-size:12px}
+.m{padding:6px 10px;border-radius:8px;max-width:80%;background:#edf2f7}.m.me{align-self:flex-end;background:#fff3ed;color:#c2410c}
+.earn{background:linear-gradient(135deg,#ff5a00,#ff8c42);border-radius:16px;padding:20px;color:#fff;margin-bottom:12px}
+.earn b{font-size:28px;display:block;margin:4px 0 10px}.earn div div{background:#ffffff26;border-radius:10px;padding:10px;text-align:center;flex:1}
+.info{background:#fff3ed;border-radius:8px;padding:9px;font-size:12px;font-weight:700;color:#c0392b}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2e8f0;display:flex;padding-bottom:env(safe-area-inset-bottom)}
+.nav div{flex:1;text-align:center;padding:9px 0;font-size:11px;font-weight:600;color:#718096;cursor:pointer}.nav .on{color:#ff5a00}.nav span{display:block;font-size:19px}
+</style></head><body><div id="app"></div>
+<script>window.onerror=function(m,s,l){var d=document.createElement('div');d.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#e74c3c;color:#fff;font:12px monospace;padding:8px;word-break:break-all';d.textContent='ERR: '+m+' @'+String(s||'').split('/').pop()+':'+l;(document.body||document.documentElement).appendChild(d)};window.addEventListener('unhandledrejection',function(e){window.onerror('Promise: '+(e.reason&&e.reason.message||e.reason),'',0)})</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="talabat-core.js?v=3"></script>
+<script>
+TLB.addDict({dOrders:'Заказы',dHist:'История',dMe:'Профиль',newO:'Новые заказы',offl:'Вы не в сети. Включите «На линии».',busy:'У вас есть активный заказ. Новые заказы скрыты до завершения.',noO:'Нет доступных заказов. Ожидание…',pick:'Забрать',drop:'Доставить',take:'Принять заказ 🚀',actO:'Активный заказ',call:'📞 Звонок',chatB:'💬 Чат',q1:'🚪 Я у дома',q2:'⏳ Задерживаюсь',q3:'📍 Где адрес?',q1t:'Я подъезжаю к дому 🚪',q2t:'Задерживаюсь в пути ⏳',q3t:'Не могу найти адрес 📍',map:'🗺️ Открыть карту',wait:'Ждите: заказ ещё готовится',gotIt:'Заказ забран из ресторана 📦',dlv:'Заказ доставлен ✅',st1:'1. Езжайте в ресторан',st2:'2. Доставьте заказ клиенту',bal:'Заработок',cnt:'Выполнено заказов',noH:'История пуста',trans:'Не удалось: проверьте статус заказа'},
+{dOrders:'Orders',dHist:'History',dMe:'Profile',newO:'New orders',offl:'You are offline. Switch to “Online”.',busy:'You have an active order. New orders are hidden until it is finished.',noO:'No orders available. Waiting…',pick:'Pick up',drop:'Deliver',take:'Accept order 🚀',actO:'Active order',call:'📞 Call',chatB:'💬 Chat',q1:'🚪 I am at the door',q2:'⏳ Running late',q3:'📍 Where is the address?',q1t:'I am arriving at your door 🚪',q2t:'Running late ⏳',q3t:'I cannot find the address 📍',map:'🗺️ Open map',wait:'Wait: the order is still being prepared',gotIt:'Order picked up 📦',dlv:'Order delivered ✅',st1:'1. Go to the restaurant',st2:'2. Deliver to the customer',bal:'Earnings',cnt:'Orders completed',noH:'No history yet',trans:'Failed: check the order status'});
+const t=TLB.t,esc=TLB.esc,$=id=>document.getElementById(id);
+let DRV=null;
+let tab='o',online=true,chatOpen=false,lastN=-1;
+const mine=()=>TLB.orders(o=>o.driver==DRV.id&&['preparing','ready','pickedup'].includes(o.status))[0]||null;
+const done=()=>TLB.orders(o=>o.driver==DRV.id&&o.status=='delivered');
+function beep(){try{const c=new(window.AudioContext||window.webkitAudioContext)();[0,.4].forEach(d=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=880;g.gain.setValueAtTime(.2,c.currentTime+d);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d+.3);o.connect(g);g.connect(c.destination);o.start(c.currentTime+d);o.stop(c.currentTime+d+.3)})}catch(e){}}
+const setTab=x=>{tab=x;render()};
+const flip=()=>{online=!online;render()};
+async function take(id){const r=await TLB.driverAccept(id);if(r.error)alert(t('err_'+r.error))}
+async function step(id,s){const r=await TLB.setStatus(id,s);if(r.error)alert(t('trans'))}
+function say(id,txt){chatOpen=true;TLB.chat(id,'driver',txt)}
+const map=q=>`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q+' Душанбе')}`;
+function vOrders(){const a=mine(),of=TLB.offers();let h=`<h3>${t('newO')}</h3>`;
+  if(!online)h+=`<div class="card">${t('offl')}</div>`;
+  else if(a)h+=`<div class="card">${t('busy')}</div>`;
+  else if(!of.length)h+=`<div class="card">${t('noO')}</div>`;
+  else h+=of.map(o=>`<div class="card"><span class="badge">${esc(o.store)}</span><div class="row" style="margin-top:6px"><b>#${o.id}</b><b style="color:#27ae60">+${o.payout.toFixed(2)} TJS</b></div>
+  <div class="route">🏬 ${t('pick')}: <b>${esc(o.store)}</b><br>📍 ${t('drop')}: <b>${esc(o.address)}</b></div><button class="b" onclick="take(${o.id})">${t('take')}</button></div>`).join('');
+  if(a){const rd=a.status=='ready',ot=a.status=='pickedup';
+    h+=`<h3>${t('actO')}</h3><div class="card act"><span class="badge" style="background:#ff5a00;color:#fff">#${a.id}</span>
+    <div class="row" style="background:#edf2f7;border-radius:10px;padding:10px;margin:10px 0"><div><b>👤 ${esc(a.client.name)}</b><div style="font-size:11px;color:#718096">${esc(a.client.phone)}</div></div>
+    <div style="display:flex;gap:6px"><a class="b" style="margin:0;padding:8px 10px;font-size:11px;width:auto;background:#27ae60" href="tel:${esc(a.client.phone)}">${t('call')}</a><button class="b m" style="margin:0;width:auto;padding:8px 10px;font-size:11px" onclick="chatOpen=!chatOpen;render()">${t('chatB')}</button></div></div>
+    ${chatOpen?`<div><span class="chip" onclick="say(${a.id},t('q1t'))">${t('q1')}</span><span class="chip" onclick="say(${a.id},t('q2t'))">${t('q2')}</span><span class="chip" onclick="say(${a.id},t('q3t'))">${t('q3')}</span>
+    <div class="chat" id="ch">${a.chat.map(m=>`<div class="m ${m.s=='driver'?'me':''}">${esc(m.t)}</div>`).join('')}</div></div>`:''}
+    <b>${esc(a.store)}</b><div style="font-size:12px;color:#4a5568;margin:4px 0 8px">📍 ${esc(a.address)}</div>
+    <div class="info">${ot?t('st2'):t('st1')}</div>
+    <a class="b m" target="_blank" href="${map(ot?a.address:a.store)}">${t('map')}</a>
+    ${ot?`<button class="b g" onclick="step(${a.id},'delivered')">${t('dlv')}</button>`:rd?`<button class="b" onclick="step(${a.id},'pickedup')">${t('gotIt')}</button>`:`<button class="b d" disabled>${t('wait')}</button>`}</div>`}
+  return h}
+function vHist(){const l=done();return `<h3>${t('dHist')}</h3>${l.length?l.map(o=>`<div class="card"><div class="row"><b>#${o.id} (${esc(o.store)})</b><b style="color:#27ae60">${o.payout.toFixed(2)} TJS</b></div><p style="font-size:12px;color:#718096;margin-top:4px">🕒 ${new Date(o.doneAt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</p></div>`).join(''):`<div class="card">${t('noH')}</div>`}`}
+function vMe(){const l=done(),sum=l.reduce((s,o)=>s+o.payout,0);
+  return `<div class="earn"><small>${t('bal')}</small><b>${sum.toFixed(2)} TJS</b><div class="row"><div><b style="font-size:20px;margin:0">${l.length}</b><small>${t('cnt')}</small></div><div><b style="font-size:20px;margin:0">4.9 ★</b><small>Rating</small></div></div></div>
+  <div class="card" style="text-align:center;background:#2d3748;color:#fff"><div style="font-size:38px">🛵</div><b>Yamaha Crypton 110cc</b><p style="font-size:11px;opacity:.8">34-12 RT 01 • #${DRV.id.slice(0,6)}</p></div>`}
+function render(){
+  const of=TLB.offers().length;if(online&&!mine()&&lastN>=0&&of>lastN)beep();lastN=of;
+  $('app').innerHTML=`<div class="hd"><div class="row"><div class="av">🚴‍♂️</div><div><b>${esc(DRV.name)}</b><div style="font-size:11px;opacity:.7">#${DRV.id.slice(0,6)} • Душанбе</div></div></div>
+  <div class="pill" onclick="flip()"><span class="dot ${online?'':'off'}"></span>${online?t('online'):t('offline')}</div></div>
+  <div class="pg">${{o:vOrders,h:vHist,m:vMe}[tab]()}</div>
+  <div class="nav">${[['o','📦','dOrders'],['h','📜','dHist'],['m','👤','dMe']].map(x=>`<div class="${tab==x[0]?'on':''}" onclick="setTab('${x[0]}')"><span>${x[1]}</span>${t(x[2])}</div>`).join('')}</div>`;
+  const ch=$('ch');if(ch)ch.scrollTop=ch.scrollHeight}
+TLB.start('driver',me=>{DRV=me;TLB.on(render);render()});
+</script></body></html>
