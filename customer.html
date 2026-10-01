@@ -10,7 +10,7 @@ body{font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;bac
 .st{position:relative}.hrt{position:absolute;top:8px;right:8px;z-index:2;background:#fff;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 6px #0003}
 .sh{font-weight:800;font-size:16px;padding:18px 15px 8px;color:#1a202c}.hs{display:flex;gap:10px;overflow-x:auto;padding:0 15px 4px;scrollbar-width:none}
 .mini{flex-shrink:0;width:150px;background:#fff;border-radius:12px;border:1px solid #edf2f7;overflow:hidden;cursor:pointer;position:relative}.mini img{width:100%;height:86px;object-fit:cover;display:block;background:#edf2f7}.mini .tt{padding:8px;font-size:12px;font-weight:700}
-.bns{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:14px 15px 0;scrollbar-width:none}.bn{flex:0 0 88%;scroll-snap-align:center;height:130px;border-radius:16px;overflow:hidden;position:relative;background:#1a202c;cursor:pointer}.bn img{width:100%;height:100%;object-fit:cover;opacity:.85;display:block}.bn b{position:absolute;left:14px;bottom:12px;right:14px;color:#fff;font-size:16px;text-shadow:0 2px 4px #000a}
+.bns{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:16px 15px 0;scrollbar-width:none}.bn{flex:0 0 92%;scroll-snap-align:center;aspect-ratio:7/3;border-radius:16px;overflow:hidden;position:relative;background:linear-gradient(135deg,#ff5a00,#ff8c42);cursor:pointer}.bn img{width:100%;height:100%;object-fit:cover;display:block}.bn b{position:absolute;left:16px;bottom:14px;right:16px;color:#fff;font-size:18px;text-shadow:0 2px 6px #0008}
 .hd small{font-size:11px;opacity:.9}.hd b{display:block;font-size:15px;margin-top:2px}
 .pg{padding:15px}h2{font-size:17px;margin-bottom:12px;color:#1a202c}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:12px 15px 0;scrollbar-width:none}
@@ -83,8 +83,8 @@ function vHome(){const cats=['rest','grocery','pharmacy','beauty','flowers','gif
   const list=STORES.map(s=>({s,h:q&&(M[s.n]||[]).find(i=>i.name.toLowerCase().includes(q))})).filter(({s,h})=>q?(s.n.toLowerCase().includes(q)||s.d.toLowerCase().includes(q)||h):(S.cat=='all'||S.cat==s.c));
   const bn=TLB.banners(),offers=STORES.filter(s=>s.disc>0).sort((a,b)=>b.disc-a.disc).slice(0,8),favs=STORES.filter(s=>TLB.isFav(s.id));
   return `<div class="hd"><small>${t('deliverTo')}</small><b>📍 Проспект Рудаки, 12</b><input type="text" id="sq" placeholder="🔍 ${t('search')}" value="${esc(S.q)}" oninput="S.q=this.value;render()"></div>
-  ${home&&bn.length?`<div class="bns">${bn.map(b=>`<div class="bn" onclick="bannerGo('${b.id}')">${b.image_url?`<img src="${esc(b.image_url)}" alt="">`:''}<b>${esc(b.title)}</b></div>`).join('')}</div>`:''}
   <div class="cats">${cats.map(c=>`<div class="ct ${S.cat==c&&!q?'on':''}" onclick="S.q='';setCat(S.cat=='${c}'?'all':'${c}')"><i>${ic[c]}</i>${t(c)}</div>`).join('')}</div>
+  ${home&&bn.length?`<div class="bns">${bn.map(b=>`<div class="bn" style="flex-basis:${bn.length>1?'92%':'100%'}" onclick="bannerGo('${b.id}')">${b.image_url?`<img src="${esc(b.image_url)}" alt="">`:`<b>${esc(b.title)}</b>`}</div>`).join('')}</div>`:''}
   ${home&&offers.length?`<div class="sh">🔥 ${t('bestOffers')}</div><div class="hs">${offers.map(mini).join('')}</div>`:''}
   ${home&&favs.length?`<div class="sh">❤️ ${t('favs')}</div><div class="hs">${favs.map(mini).join('')}</div>`:''}
   ${home?`<div class="sh">${t('allStores')}</div>`:''}
