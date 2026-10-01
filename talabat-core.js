@@ -45,7 +45,7 @@
 
   /* ---------- Supabase runtime ---------- */
   var sb = null, ME = null, need = '', onReady = null, sig = '', ORD = [];
-  var DB = { stores: [], items: [], orders: [], oitems: [], chat: [], drivers: [] };
+  var DB = { stores: [], items: [], orders: [], oitems: [], chat: [], drivers: [], banners: [], favs: [] };
   function storeName(id) { var s = DB.stores.find(function (x) { return x.id === id; }); return s ? s.name : '?'; }
   function shapeItem(i) { return { id: i.id, name: i.name, price: +i.price, image: i.image_url || '', available: i.available, popular: i.popular, approved: i.approved, store: storeName(i.store_id) }; }
   function shape() {
@@ -67,15 +67,19 @@
       sb.from('orders').select('*').order('created_at', { ascending: false }).limit(200),
       sb.from('order_items').select('*'),
       sb.from('order_chat').select('*').order('created_at'),
-      ME.role === 'admin' ? sb.from('profiles').select('*').eq('role', 'driver') : Promise.resolve({ data: [] })
+      ME.role === 'admin' ? sb.from('profiles').select('*').eq('role', 'driver') : Promise.resolve({ data: [] }),
+      sb.from('banners').select('*').order('sort').order('created_at'),
+      sb.from('favorites').select('store_id')
     ]).then(function (r) {
-      var bad = r.find(function (x) { return x.error; });
+      var bad = r.slice(0, 6).find(function (x) { return x.error; });
       if (bad) { console.error(bad.error); return; }
       var s = JSON.stringify(r.map(function (x) { return x.data; }));
       if (s === sig) return;
       sig = s;
       DB.stores = r[0].data || []; DB.items = r[1].data || []; DB.orders = r[2].data || [];
       DB.oitems = r[3].data || []; DB.chat = r[4].data || []; DB.drivers = r[5].data || [];
+      DB.banners = r[6].error ? [] : (r[6].data || []);
+      DB.favs = r[7].error ? [] : (r[7].data || []).map(function (x) { return x.store_id; });
       ORD = shape(); fire();
     });
   }
@@ -194,6 +198,19 @@
     addStore: function (f) { return sb.from('stores').insert(f).then(done); },
     updateStore: function (id, f) { return sb.from('stores').update(f).eq('id', id).then(done); },
     assignOwner: function (id, email) { return rpc('assign_owner', { p_store: id, p_email: email }); },
-    setDriverStatus: function (id, st) { return sb.from('profiles').update({ driver_status: st }).eq('id', id).then(done); }
+    setDriverStatus: function (id, st) { return sb.from('profiles').update({ driver_status: st }).eq('id', id).then(done); },
+
+    banners: function (all) { return DB.banners.filter(function (b) { return all || b.is_active; }); },
+    addBanner: function (f) { return sb.from('banners').insert(f).then(done); },
+    updateBanner: function (id, f) { return sb.from('banners').update(f).eq('id', id).then(done); },
+    deleteBanner: function (id) { return sb.from('banners').delete().eq('id', id).then(done); },
+    isFav: function (storeId) { return DB.favs.indexOf(storeId) >= 0; },
+    toggleFav: function (storeId) {
+      var has = DB.favs.indexOf(storeId) >= 0;
+      DB.favs = has ? DB.favs.filter(function (x) { return x !== storeId; }) : DB.favs.concat([storeId]);
+      fire();
+      var q = has ? sb.from('favorites').delete().eq('user_id', ME.id).eq('store_id', storeId) : sb.from('favorites').insert({ user_id: ME.id, store_id: storeId });
+      return q.then(function (r) { if (r.error) console.error(r.error); sig = ''; return refresh(); });
+    }
   };
 })();

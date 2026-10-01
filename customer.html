@@ -7,6 +7,10 @@
 body{font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f4f6f8;color:#333;padding-bottom:130px}
 .hd{background:#ff5a00;color:#fff;padding:26px 15px 15px;border-radius:0 0 20px 20px}
 .hd input{margin-top:12px;border:0;border-radius:12px;padding:12px 14px;font-size:14px}.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px 15px 0}.ct{background:#fff;border:1px solid #edf2f7;border-radius:14px;padding:11px 2px;text-align:center;font-size:11px;font-weight:700;cursor:pointer}.ct i{display:block;font-style:normal;font-size:26px;margin-bottom:3px}.ct.on{border-color:#ff5a00;background:#fff3ed;color:#ff5a00}
+.st{position:relative}.hrt{position:absolute;top:8px;right:8px;z-index:2;background:#fff;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 6px #0003}
+.sh{font-weight:800;font-size:16px;padding:18px 15px 8px;color:#1a202c}.hs{display:flex;gap:10px;overflow-x:auto;padding:0 15px 4px;scrollbar-width:none}
+.mini{flex-shrink:0;width:150px;background:#fff;border-radius:12px;border:1px solid #edf2f7;overflow:hidden;cursor:pointer;position:relative}.mini img{width:100%;height:86px;object-fit:cover;display:block;background:#edf2f7}.mini .tt{padding:8px;font-size:12px;font-weight:700}
+.bns{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:14px 15px 0;scrollbar-width:none}.bn{flex:0 0 88%;scroll-snap-align:center;height:130px;border-radius:16px;overflow:hidden;position:relative;background:#1a202c;cursor:pointer}.bn img{width:100%;height:100%;object-fit:cover;opacity:.85;display:block}.bn b{position:absolute;left:14px;bottom:12px;right:14px;color:#fff;font-size:16px;text-shadow:0 2px 4px #000a}
 .hd small{font-size:11px;opacity:.9}.hd b{display:block;font-size:15px;margin-top:2px}
 .pg{padding:15px}h2{font-size:17px;margin-bottom:12px;color:#1a202c}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:12px 15px 0;scrollbar-width:none}
@@ -37,14 +41,14 @@ input[type=text]{width:100%;padding:11px 13px;border:1px solid #cbd5e1;border-ra
 <div id="app"></div>
 <script>window.onerror=function(m,s,l){var d=document.createElement('div');d.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#e74c3c;color:#fff;font:12px monospace;padding:8px;word-break:break-all';d.textContent='ERR: '+m+' @'+String(s||'').split('/').pop()+':'+l;(document.body||document.documentElement).appendChild(d)};window.addEventListener('unhandledrejection',function(e){window.onerror('Promise: '+(e.reason&&e.reason.message||e.reason),'',0)})</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="talabat-core.js?v=3"></script>
+<script src="talabat-core.js?v=4"></script>
 <script>
-TLB.addDict({home:'Главная',orders:'Заказы',me:'Профиль',deliverTo:'ДОСТАВКА В',all:'Все',rest:'Рестораны',grocery:'Продукты',pharmacy:'Аптеки',beauty:'Красота',flowers:'Цветы',sweets:'Сладости',gifts:'Подарки',free:'Бесплатно',shops:'Магазины',search:'Поиск ресторанов, товаров, блюд…',noRes:'Ничего не найдено',noMenu:'Меню скоро появится',closed:'Закрыто',addBtn:'Добавить',cartEmpty:'Корзина пуста',sub:'Подытог',deliv:'Доставка',disc:'Скидка',tip:'Чаевые курьеру',total:'Итого',promo:'Промокод',apply:'Применить',promoBad:'Неверный промокод',payM:'Способ оплаты',apple:'Apple Pay',card:'Карта Alif',cash:'Наличными курьеру',place:'Оплатить заказ',noOrders:'Заказов пока нет',track:'Отслеживать',back:'Назад',courier:'Курьер',cancelO:'Отменить заказ',chatH:'Сообщение курьеру',send:'Отправить',langL:'Язык',none:'Нет',s_pending:'Ожидание',s_preparing:'Готовится',s_pickedup:'В пути',s_delivered:'Доставлено',cartT:'Корзина',addr:'Адрес доставки',note:'Тестовая версия'},
-{home:'Home',orders:'Orders',me:'Profile',deliverTo:'DELIVER TO',all:'All',rest:'Restaurants',grocery:'Groceries',pharmacy:'Pharmacy',beauty:'Beauty',flowers:'Flowers',sweets:'Sweets',gifts:'Gifts',free:'Free',shops:'Shops',search:'Search restaurants, products, dishes…',noRes:'Nothing found',noMenu:'Menu coming soon',closed:'Closed',addBtn:'Add',cartEmpty:'Your cart is empty',sub:'Subtotal',deliv:'Delivery',disc:'Discount',tip:'Courier tip',total:'Total',promo:'Promo code',apply:'Apply',promoBad:'Invalid promo code',payM:'Payment method',apple:'Apple Pay',card:'Alif card',cash:'Cash to courier',place:'Pay for order',noOrders:'No orders yet',track:'Track',back:'Back',courier:'Courier',cancelO:'Cancel order',chatH:'Message courier',send:'Send',langL:'Language',none:'None',s_pending:'Waiting',s_preparing:'Preparing',s_pickedup:'On the way',s_delivered:'Delivered',cartT:'Cart',addr:'Delivery address',note:'Test version'});
+TLB.addDict({home:'Главная',orders:'Заказы',me:'Профиль',deliverTo:'ДОСТАВКА В',all:'Все',rest:'Рестораны',grocery:'Продукты',pharmacy:'Аптеки',beauty:'Красота',flowers:'Цветы',sweets:'Сладости',gifts:'Подарки',free:'Бесплатно',bestOffers:'Лучшие предложения',favs:'Избранное',allStores:'Все магазины',shops:'Магазины',search:'Поиск ресторанов, товаров, блюд…',noRes:'Ничего не найдено',noMenu:'Меню скоро появится',closed:'Закрыто',addBtn:'Добавить',cartEmpty:'Корзина пуста',sub:'Подытог',deliv:'Доставка',disc:'Скидка',tip:'Чаевые курьеру',total:'Итого',promo:'Промокод',apply:'Применить',promoBad:'Неверный промокод',payM:'Способ оплаты',apple:'Apple Pay',card:'Карта Alif',cash:'Наличными курьеру',place:'Оплатить заказ',noOrders:'Заказов пока нет',track:'Отслеживать',back:'Назад',courier:'Курьер',cancelO:'Отменить заказ',chatH:'Сообщение курьеру',send:'Отправить',langL:'Язык',none:'Нет',s_pending:'Ожидание',s_preparing:'Готовится',s_pickedup:'В пути',s_delivered:'Доставлено',cartT:'Корзина',addr:'Адрес доставки',note:'Тестовая версия'},
+{home:'Home',orders:'Orders',me:'Profile',deliverTo:'DELIVER TO',all:'All',rest:'Restaurants',grocery:'Groceries',pharmacy:'Pharmacy',beauty:'Beauty',flowers:'Flowers',sweets:'Sweets',gifts:'Gifts',free:'Free',bestOffers:'Best offers',favs:'Favorites',allStores:'All stores',shops:'Shops',search:'Search restaurants, products, dishes…',noRes:'Nothing found',noMenu:'Menu coming soon',closed:'Closed',addBtn:'Add',cartEmpty:'Your cart is empty',sub:'Subtotal',deliv:'Delivery',disc:'Discount',tip:'Courier tip',total:'Total',promo:'Promo code',apply:'Apply',promoBad:'Invalid promo code',payM:'Payment method',apple:'Apple Pay',card:'Alif card',cash:'Cash to courier',place:'Pay for order',noOrders:'No orders yet',track:'Track',back:'Back',courier:'Courier',cancelO:'Cancel order',chatH:'Message courier',send:'Send',langL:'Language',none:'None',s_pending:'Waiting',s_preparing:'Preparing',s_pickedup:'On the way',s_delivered:'Delivered',cartT:'Cart',addr:'Delivery address',note:'Test version'});
 const t=TLB.t,esc=TLB.esc,$=id=>document.getElementById(id);
 const U=i=>`https://images.unsplash.com/${i}?w=500`;
 let STORES=[];
-const syncStores=()=>{STORES=TLB.stores().map(x=>({n:x.name,c:x.category,d:x.description||'',i:x.cover_url||'',p:+x.discount_pct>0?'-'+x.discount_pct+'%':'',ft:x.fee_type,fee:x.fee_type=='free'?0:+x.fee_base,disc:+x.discount_pct}))};
+const syncStores=()=>{STORES=TLB.stores().map(x=>({id:x.id,n:x.name,c:x.category,d:x.description||'',i:x.cover_url||'',p:+x.discount_pct>0?'-'+x.discount_pct+'%':'',ft:x.fee_type,fee:x.fee_type=='free'?0:+x.fee_base,disc:+x.discount_pct}))};
 let ME={name:'',phone:''};
 let S={v:'home',cat:'all',q:'',store:'',cart:{},promo:'',tip:0,pay:'apple',tid:null,bad:false};
 const menuOf=n=>TLB.allMenus(false)[n]||[];
@@ -66,14 +70,25 @@ function cancelO(){if(confirm(t('confirm_cancel'))){TLB.setStatus(S.tid,'cancell
 function sendChat(){const e=$('ci'),v=e.value.trim();if(!v)return;e.value='';TLB.chat(S.tid,'client',v)}
 const cartCount=()=>Object.values(S.cart).reduce((a,b)=>a+b,0);
 
-function vHome(){const cats=['rest','grocery','pharmacy','beauty','flowers','gifts','shops','sweets'],ic={rest:'🍔',grocery:'🛒',pharmacy:'💊',beauty:'💄',flowers:'💐',gifts:'🎁',shops:'🛍️',sweets:'🍰'};
-  const q=S.q.trim().toLowerCase(),M=TLB.allMenus(true);
-  const list=STORES.map(s=>({s,h:q&&(M[s.n]||[]).find(i=>i.name.toLowerCase().includes(q))})).filter(({s,h})=>q?(s.n.toLowerCase().includes(q)||s.d.toLowerCase().includes(q)||h):(S.cat=='all'||S.cat==s.c));
-  return `<div class="hd"><small>${t('deliverTo')}</small><b>📍 Проспект Рудаки, 12</b><input type="text" id="sq" placeholder="🔍 ${t('search')}" value="${esc(S.q)}" oninput="S.q=this.value;render()"></div>
-  <div class="cats">${cats.map(c=>`<div class="ct ${S.cat==c&&!q?'on':''}" onclick="S.q='';setCat(S.cat=='${c}'?'all':'${c}')"><i>${ic[c]}</i>${t(c)}</div>`).join('')}</div>
-  <div class="pg">${list.length?list.map(({s,h})=>`<div class="card st" onclick="openStore(${STORES.indexOf(s)})"><img src="${esc(s.i)}" alt=""><div>
+function heart(s){return `<div class="hrt" onclick="event.stopPropagation();TLB.toggleFav('${s.id}')">${TLB.isFav(s.id)?'❤️':'🤍'}</div>`}
+function bannerGo(id){const b=TLB.banners().find(x=>x.id==id);if(!b)return;
+  if(b.link_type=='store'){const i=STORES.findIndex(x=>x.id==b.link_value);if(i>=0)openStore(i)}
+  else if(b.link_type=='category'){S.q='';setCat(b.link_value)}}
+function mini(s){return `<div class="mini" onclick="openStore(${STORES.indexOf(s)})">${heart(s)}<img src="${esc(s.i)}" alt=""><div class="tt">${esc(s.n)} ${s.p?`<span class="tag">${s.p}</span>`:''}</div></div>`}
+function storeCard(s,h){return `<div class="card st" onclick="openStore(${STORES.indexOf(s)})">${heart(s)}<img src="${esc(s.i)}" alt=""><div>
    <div class="row"><b>${esc(s.n)}</b>${TLB.isOpen(s.n)?(s.p?`<span class="tag">${s.p}</span>`:''):`<span class="tag x">${t('closed')}</span>`}</div>
-   <p>${esc(s.d)}</p>${h?`<p style="color:#ff5a00">🍽 ${esc(h.name)} — ${h.price} TJS</p>`:''}<p>🚴 ${s.ft=='free'?t('free'):s.fee+' TJS'}</p></div></div>`).join(''):`<div class="card">${t('noRes')}</div>`}</div>`}
+   <p>${esc(s.d)}</p>${h?`<p style="color:#ff5a00">🍽 ${esc(h.name)} — ${h.price} TJS</p>`:''}<p>🚴 ${s.ft=='free'?t('free'):s.fee+' TJS'}</p></div></div>`}
+function vHome(){const cats=['rest','grocery','pharmacy','beauty','flowers','gifts','shops','sweets'],ic={rest:'🍔',grocery:'🛒',pharmacy:'💊',beauty:'💄',flowers:'💐',gifts:'🎁',shops:'🛍️',sweets:'🍰'};
+  const q=S.q.trim().toLowerCase(),M=TLB.allMenus(true),home=!q&&S.cat=='all';
+  const list=STORES.map(s=>({s,h:q&&(M[s.n]||[]).find(i=>i.name.toLowerCase().includes(q))})).filter(({s,h})=>q?(s.n.toLowerCase().includes(q)||s.d.toLowerCase().includes(q)||h):(S.cat=='all'||S.cat==s.c));
+  const bn=TLB.banners(),offers=STORES.filter(s=>s.disc>0).sort((a,b)=>b.disc-a.disc).slice(0,8),favs=STORES.filter(s=>TLB.isFav(s.id));
+  return `<div class="hd"><small>${t('deliverTo')}</small><b>📍 Проспект Рудаки, 12</b><input type="text" id="sq" placeholder="🔍 ${t('search')}" value="${esc(S.q)}" oninput="S.q=this.value;render()"></div>
+  ${home&&bn.length?`<div class="bns">${bn.map(b=>`<div class="bn" onclick="bannerGo('${b.id}')">${b.image_url?`<img src="${esc(b.image_url)}" alt="">`:''}<b>${esc(b.title)}</b></div>`).join('')}</div>`:''}
+  <div class="cats">${cats.map(c=>`<div class="ct ${S.cat==c&&!q?'on':''}" onclick="S.q='';setCat(S.cat=='${c}'?'all':'${c}')"><i>${ic[c]}</i>${t(c)}</div>`).join('')}</div>
+  ${home&&offers.length?`<div class="sh">🔥 ${t('bestOffers')}</div><div class="hs">${offers.map(mini).join('')}</div>`:''}
+  ${home&&favs.length?`<div class="sh">❤️ ${t('favs')}</div><div class="hs">${favs.map(mini).join('')}</div>`:''}
+  ${home?`<div class="sh">${t('allStores')}</div>`:''}
+  <div class="pg" ${home?'style="padding-top:0"':''}>${list.length?list.map(({s,h})=>storeCard(s,h)).join(''):`<div class="card">${t('noRes')}</div>`}</div>`}
 function vMenu(){const m=TLB.allMenus(true)[S.store]||[],open=TLB.isOpen(S.store);
   return `<div class="pg"><button class="btn g" onclick="go('home')">← ${t('back')}</button><h2 style="margin-top:14px">${esc(S.store)} ${open?'':`<span class="tag x">${t('closed')}</span>`}</h2>
   ${m.length?m.map(i=>{const q=S.cartStore==S.store&&S.cart[i.id]||0;return `<div class="card it row"><img src="${esc(i.image)}" alt=""><div class="i"><b>${esc(i.name)}</b>${i.popular?' 🌟':''}<div class="pr">${i.price} TJS</div></div>
